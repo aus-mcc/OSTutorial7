@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <signal.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
@@ -17,15 +18,17 @@ typedef struct proc{
 typedef struct queue{
     proc process;
     struct queue *next;
-}queue;
+}que;
+
+que *queue;
 
 void push(proc process){
-    queue *n = malloc(sizeof(queue));
+    que *n = queue;
     while(n->next!=NULL){
         n=n->next;
     }
 
-    n->next = malloc(sizeof(queue));
+    n->next = (que*)malloc(sizeof(queue));
     n->next->process = process;
     n->next->next=NULL;
 
@@ -35,23 +38,39 @@ void push(proc process){
     n->process.pid = process.pid;
     n->process.runtime = process.runtime;
     */
-    
-}
+}    
 
-void iterate(queue *q){
-    queue * current = q;
-    while(current!=NULL){
-        printf("%d/n", current->process);
-    }
-}
 int main(void){
     FILE *fp;
     fp = fopen("processes.txt","r");
-    queue *queue = malloc(sizeof(queue));
-    while(!feof(fp)){
-        struct proc *p = (struct proc*)malloc(sizeof(struct proc));
-        fscanf(fp, "%s%*c %d%*c %d%*c %d%*c",&p->name, &p->priority,&p->pid,&p->runtime);
-        push(*p);
+    queue = NULL;
+
+    int len = 0;
+    int read;
+
+    char *line = NULL;
+
+    while((read = getline(&line, &len, fp)) != -1){
+        proc p;
+        char * tok = NULL;
+        tok =  strtok(line,",");
+        strcpy(p.name, tok);
+        tok = strtok(NULL,",");
+        p.priority = atoi(tok);
+        tok = strtok(NULL,",");
+        p.pid = atoi(tok);
+        tok =strtok(NULL,",");
+        p.runtime = atoi(tok);
+        push(p);
     }
-    iterate(queue);
+    fclose(fp);
+    
+    que *current = queue;
+    current = current->next;
+    while(current!=NULL){
+        proc p = current->process;
+        printf("Name: %s\nPriority: %d\nPid: %d\nRunTime: %d\n",p.name,p.priority,p.pid,p.runtime);
+    }
+    free(line);
+    return 0;
 }
