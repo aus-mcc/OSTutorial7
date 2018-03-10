@@ -21,12 +21,21 @@ typedef struct queue{
 
 void push(proc process){
     queue *n = malloc(sizeof(queue));
+    while(n->next!=NULL){
+        n=n->next;
+    }
+
+    n->next = malloc(sizeof(queue));
+    n->next->process = process;
+    n->next->next=NULL;
+
+    /*
     n->process.name[256] = process.name[256];
     n->process.priority = process.priority;
     n->process.pid = process.pid;
     n->process.runtime = process.runtime;
-
-    free(n);
+    */
+    
 }
 
 void iterate(queue *q){
@@ -38,8 +47,11 @@ void iterate(queue *q){
 int main(void){
     FILE *fp;
     fp = fopen("processes.txt","r");
+    queue *queue = malloc(sizeof(queue));
     while(!feof(fp)){
         struct proc *p = (struct proc*)malloc(sizeof(struct proc));
-        fscanf(fp, "%s %d %d %d",&p->name, &p->priority,&p->pid,&p->runtime);
+        fscanf(fp, "%s%*c %d%*c %d%*c %d%*c",&p->name, &p->priority,&p->pid,&p->runtime);
+        push(*p);
     }
+    iterate(queue);
 }
