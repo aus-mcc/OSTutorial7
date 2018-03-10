@@ -7,14 +7,14 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-typedef struct{
+typedef struct proc{
     char name[256];
     int priority;
     int pid;
     int runtime;
 }proc;
 
-typedef struct{
+typedef struct queue{
     proc process;
     struct queue *next;
 }queue;
@@ -36,5 +36,10 @@ void iterate(queue *q){
     }
 }
 int main(void){
-
+    FILE *fp;
+    fp = fopen("processes.txt","r");
+    while(!feof(fp)){
+        struct proc *p = (struct proc*)malloc(sizeof(struct proc));
+        fscanf(fp, "%s %d %d %d",&p->name, &p->priority,&p->pid,&p->runtime);
+    }
 }
