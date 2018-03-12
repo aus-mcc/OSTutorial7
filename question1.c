@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-typedef struct proc{
+typedef struct{
     char name[256];
     int priority;
     int pid;
@@ -28,7 +28,7 @@ void push(proc process){
         n=n->next;
     }
 
-    n->next = (que*)malloc(sizeof(queue));
+    n->next = (que*)malloc(sizeof(que));
     n->next->process = process;
     n->next->next=NULL;
 
@@ -44,9 +44,11 @@ int main(void){
     FILE *fp;
     fp = fopen("processes.txt","r");
     queue = NULL;
+    queue = malloc(sizeof(que));
+    queue->next = NULL;
 
-    int len = 0;
-    int read;
+    size_t len = 0;
+    ssize_t read;
 
     char *line = NULL;
 
@@ -69,7 +71,9 @@ int main(void){
     current = current->next;
     while(current!=NULL){
         proc p = current->process;
-        printf("Name: %s\nPriority: %d\nPid: %d\nRunTime: %d\n",p.name,p.priority,p.pid,p.runtime);
+        printf("Name: %s Priority: %d Pid: %d RunTime: %d\n",
+        p.name,p.priority,p.pid,p.runtime);
+        current =current->next;
     }
     free(line);
     return 0;
