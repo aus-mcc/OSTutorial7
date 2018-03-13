@@ -47,5 +47,8 @@ int main(){
 
     return 0;
 }
+<<<<<<< HEAD
 
 //smmpd
+=======
+>>>>>>> 331c3bc88362004722d0ee5354f7245b3fae8d95
