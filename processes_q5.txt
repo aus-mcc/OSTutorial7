@@ -7,4 +7,8 @@ chrome, 1, 3
 chrome, 1, 1
 gedit, 2, 4
 eclipse, 2, 2
+<<<<<<< HEAD
 clang, 1, 3
+=======
+clang, 1, 3
+>>>>>>> 44af56ccec74fca58576f2b67e3dc4b5c2b0e5f5
