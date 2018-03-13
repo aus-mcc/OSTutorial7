@@ -89,7 +89,7 @@ char * colours [] = { BLACK ON_WHITE, CYAN ON_RED, GREEN ON_MAGENTA,
 char * colour;                        // choice of colour for this process
 
 
-static int signal_SIGINT = FALSE;     // flags set by signal handler
+static int signal_SIGINT = TRUE;     // flags set by signal handler
 static int signal_SIGQUIT = FALSE;    // (all response done in main process   
 static int signal_SIGHUP = FALSE;     //  rather than in interrupt routine)
 static int signal_SIGTERM = FALSE;

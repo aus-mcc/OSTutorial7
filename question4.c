@@ -4,30 +4,38 @@
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/times.h>
+#include <stdlib.h>
 
 #define SHELL "/home/pb12/Desktop/Operating Systems/OSTutorial7/process"
 
 
-int main(int argc, char *argv){
+int main(){
 
     int status;
     pid_t childPid;
 
     childPid = fork();
-    printf("1) Process ID for childPid is: %d\n",getpid());
+
     if(childPid < 0){
         perror("Failed to create child process");
         return 1;
     }
     if(childPid == 0){
-        printf("2) You are child process: %d\n", getpid());
-        execl(SHELL, SHELL, (char *) NULL);
+        printf("You are child process: %d\n", getpid());
+        execv(SHELL,(char *) NULL);
+        exit(0);
     }
     else{
-        printf("3) You are parent: %d\n", getpid());
+        printf("You are parent: %d\n", getpid());
         sleep(5);
-        kill(childPid, SIGINT);
+        kill(childPid, SIGTSTP);
+        sleep(10);
+        kill(childPid, SIGCONT);
+        waitpid(childPid);
+        exit(0);
     }
 
     return 0;
 }
+
+//smmpd
