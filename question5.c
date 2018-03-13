@@ -121,6 +121,7 @@ int main(void){
 
     char *line = NULL;
 
+    // Read lines from the file, but i commented out hte pid read portion
     while((read = getline(&line, &len, fp)) != -1){
         proc p;
         char * tok = NULL;
@@ -138,35 +139,40 @@ int main(void){
         push(p);
     }
 
+    // new instance of current for this queue
     que *current = queue;
-    current = current->next;
-    while(current!=NULL){
-        proc p = current->process;
-        if(p.priority==0){
-            const char *com = p.name;
-            int status;
-            pid_t pid;
-            pid = fork();
-            if(pid<0){
+    current = current->next; // set current to point past sentinal
+    while(current!=NULL){ // while there are still nodes
+        proc p = current->process; // p is current node
+        if(p.priority==0){ // if p.priority is 0
+            const char *com = p.name; // char to store name
+            int status; // status for sigint
+            pid_t pid; // set the pid
+            pid = fork(); // fork process
+            if(pid<0){ // if fork failed
                 printf("Fork Failed");
                 status = -1;
             }
-            else if(pid == 0){
-                exec(com);
-                exit(0);
+            else if(pid == 0){ // if fork was successful
+                exec(com); // execute the function name
+                exit(0); // exit and return to parent
             }
-            else{
-                sleep(p.runtime);
-                kill(pid, SIGINT);
-                waitpid(pid, &status,0);
-                if(status==0){
-                    p.pid = pid;
+            else{ // if parent
+                sleep(p.runtime); // sleep for p's runtime
+                kill(pid, SIGINT); // kill the process
+                waitpid(pid, &status,0); // wait for the child to terminate
+                if(status==0){ // if terminated normally
+                    p.pid = pid; // set pid to the pid created
+                    // print process information
                      printf("Name: %s Priority: %d Pid: %d RunTime: %d\n",
                             p.name,p.priority,p.pid,p.runtime);
-                    current=current->next;
+                    current=current->next; // point to next node
                 }
             }
         }
+
+        // Method here is same as above but added pop statement at bottom
+        // to remove processes from the queue
         else{
             const char *com = p.name;
             int status;
@@ -190,6 +196,7 @@ int main(void){
                      printf("Name: %s Priority: %d Pid: %d RunTime: %d\n",
                             p.name,p.priority,p.pid,p.runtime);
                     current=current->next;
+                    pop();
                 }
             }
 
@@ -199,6 +206,8 @@ int main(void){
 
 
     }
-    fclose(fp);
+    fclose(fp); // close fp
+    free(line); // free memory
+    return 0;
 }
     
